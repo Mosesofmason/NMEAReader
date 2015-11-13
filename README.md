@@ -1,4 +1,4 @@
 # NMEAReader
 NMEA Reader
 
-Read NMEA data from serial port & plain text file. Plot line and mark on Google Map if online. show raw data in another tab.
+Read NMEA data from serial port & plain text file. Plot lines and marker on Google Map if online. Show fix data and raw data in tabs...
