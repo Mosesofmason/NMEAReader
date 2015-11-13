@@ -30,6 +30,7 @@ namespace NMEAReader
     {
         SerialPort serial = null;
         ArrayList markList = new ArrayList ();
+        string lastString = "";
 
         public MainWindow ()
         {
@@ -136,11 +137,23 @@ namespace NMEAReader
         private delegate void UpdateUiTextDelegate (string text);
         private void Recieve (object sender, SerialDataReceivedEventArgs e)
         {
+
             // Collecting the characters received to our 'buffer' (string).
             string recieved_data = serial.ReadExisting ();
             Dispatcher.Invoke (DispatcherPriority.Send, 
                 new UpdateUiTextDelegate (WriteData), 
                 recieved_data);
+            if (!recieved_data.Contains (System.Environment.NewLine))
+            {
+                lastString += recieved_data;
+            }
+            else
+            {
+                string [] dataArray = recieved_data.Split (new char [] { '\n' }, 2);
+                lastString += dataArray [0];
+                ParseNMEALine (lastString);
+                lastString = dataArray [1];
+            }
         }
 
         private void WriteData (string text)
@@ -153,6 +166,7 @@ namespace NMEAReader
             para.Inlines.Add (text);
             mcFlowDoc.Blocks.Add (para);
             //Commdata.Document = mcFlowDoc;
+            rawText.Document = mcFlowDoc;
         }
 
         private SerialPortInfo readSettingFile ()
